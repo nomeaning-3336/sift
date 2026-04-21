@@ -34,6 +34,52 @@ Default behavior runs `strings` first for file inputs:
 sift sample.exe
 ```
 
+## Before / after
+
+Raw `strings` output from a binary often mixes useful symbols with opcode-like junk:
+
+```text
+__gmon_start__
+D$8H
+RSDS
+AUATUWVSH
+UTF-8
+t9eHA
+libc.so.6
+```
+
+Running `sift sample.exe` keeps the structured strings and drops the junk:
+
+```text
+__gmon_start__
+RSDS
+UTF-8
+libc.so.6
+```
+
+If you want to inspect borderline cases in a text file, use labels:
+
+```text
+$ cat input.txt
+RSDS
+R@DS
+D$8H
+LANG
+t9eHA
+```
+
+```bash
+sift --show-labels --no-strings input.txt
+```
+
+```text
+[KEEP   12%] RSDS
+[JUNK   71%] R@DS
+[JUNK  100%] D$8H
+[KEEP   10%] LANG
+[JUNK   83%] t9eHA
+```
+
 ## Project layout
 
 - `src/sift/`: installable CLI and model code
