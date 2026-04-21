@@ -36,26 +36,51 @@ sift sample.exe
 
 ## Before / after
 
-Raw `strings` output from a binary often mixes useful symbols with opcode-like junk:
+Raw `strings` output from a binary often mixes useful symbols with opcode-like junk.
+Running `sift sample.exe` keeps the structured strings and drops the obvious noise:
 
-```text
-__gmon_start__
+<table>
+  <tr>
+    <th>Before</th>
+    <th>After</th>
+  </tr>
+  <tr>
+    <td valign="top">
+      <pre><code>__gmon_start__
 D$8H
 RSDS
 AUATUWVSH
 UTF-8
 t9eHA
 libc.so.6
-```
-
-Running `sift sample.exe` keeps the structured strings and drops the junk:
-
-```text
-__gmon_start__
+GLIBC_2.2.5
+T$PH
+/lib64/ld-linux-x86-64.so.2
+A_A^A\_^[]
+LANG
+api-ms-win-core-processenvironment-l1-1-0.dll
+UVWHAUATUWVSH
+%Y-%m-%d
+RSD)D
+memcpy
+|$0H
+.note.gnu.build-id</code></pre>
+    </td>
+    <td valign="top">
+      <pre><code>__gmon_start__
 RSDS
 UTF-8
 libc.so.6
-```
+GLIBC_2.2.5
+/lib64/ld-linux-x86-64.so.2
+LANG
+api-ms-win-core-processenvironment-l1-1-0.dll
+%Y-%m-%d
+memcpy
+.note.gnu.build-id</code></pre>
+    </td>
+  </tr>
+</table>
 
 If you want to inspect borderline cases in a text file, use labels:
 
@@ -66,6 +91,13 @@ R@DS
 D$8H
 LANG
 t9eHA
+UTF-8
+UVWH
+libc.so.6
+Gnu
+AUATUWVSH
+%H:%M:%S
+RSD)D
 ```
 
 ```bash
@@ -78,6 +110,13 @@ sift --show-labels --no-strings input.txt
 [JUNK  100%] D$8H
 [KEEP   10%] LANG
 [JUNK   83%] t9eHA
+[KEEP    9%] UTF-8
+[JUNK  100%] UVWH
+[KEEP    8%] libc.so.6
+[JUNK   58%] Gnu
+[JUNK  100%] AUATUWVSH
+[KEEP   11%] %H:%M:%S
+[JUNK   66%] RSD)D
 ```
 
 ## Project layout
